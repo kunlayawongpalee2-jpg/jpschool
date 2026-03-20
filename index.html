@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>ระบบบันทึกการอบรม - โรงเรียนจิรพิทยา</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700;800&display=swap" rel="stylesheet">
     <style>body { font-family: 'Sarabun', sans-serif; background-color: #f8fafc; }</style>
 </head>
@@ -15,8 +16,19 @@
                 <p class="text-indigo-200">ระบบบันทึกการพัฒนาบุคลากร (Column A-I)</p>
             </div>
             <div class="bg-indigo-600/30 px-8 py-4 rounded-2xl text-center border border-white/20 backdrop-blur-sm">
-                <p class="text-[10px] uppercase opacity-70 mb-1">ชั่วโมงอบรมรวม</p>
+                <p class="text-[10px] uppercase opacity-70 mb-1">ชั่วโมงอบรมรวม (ปีที่เลือก)</p>
                 <p id="grandTotal" class="text-4xl font-black text-yellow-400">0</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 mb-6">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                <h2 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="bg-amber-500 text-white p-1 rounded-lg text-sm">📊</span> สรุปชั่วโมงรายบุคคล
+                </h2>
+                <div class="h-[300px] w-full">
+                    <canvas id="hoursChart"></canvas>
+                </div>
             </div>
         </div>
 
@@ -78,7 +90,6 @@
     </div>
 
     <script>
-        // *** แก้ URL ตรงนี้ ***
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyEypnUf7bS4mn9n03izkdxcvMgd6N78PfWGM1o2BBjrpG3WeyaCkzWDUtR-Etfo6h0/exec"; 
 
         const teachers = ["นางกิ่งกาญจน์ จันทร์ธง", "นางกัลยา วงศ์ปาลีย์", "นางชนากานต์ ธะนะคำ", "นางชนม์นิภา พงษ์บัณฑิตนุกุล", "นางชัชวาล สิริกรเกษม", "นางนันทนา คำตุ้ย", "นางบุรัสกร วงค์ชัย", "นางพัชรินทร์ ธาวงค์", "นางพิจิตรา บุญมาดวง", "นางพิมลพร อุตเรือน", "นางภูวรินทร์ แสนใจ", "นางมาริสา มหาไม้", "นางยอดยิ่ง กันทะวงค์", "นางวชิรา บุญมี", "นางวรรณวิภา จินาติ", "นางวรารัตน์ แสงสว่าง", "นางวิลดา ตาคำ", "นางศรสวรรค์ ตั๋นวัน", "นางสุจิตรา เมืองแก้ว", "นางสุธาสินี เซ็นแก้ว", "นางสุภาพ ริยะป่า", "นางอัจฉรา บุศยบุตร", "นางอรรถพล สิริรักษ์", "นางอภิวัฒน์ ธะนะคำ", "นายณัฐพงษ์ ไชยกันทา", "นายพิษณุ ธรรมตา", "นายอนุพงษ์ วรรณคำ", "ว่าที่ร้อยตรีหญิงชิดชนก นำมะ", "นางสาวแกมกมล ไชยกันทา", "นางสาวจินตนา กุนนะ", "นางสาวธวิชาทร อินทราทิพย์", "นางสาวปัฐญา สายมณี", "นางสาวพิไลลักษณ์ อะกะเรือน"];
@@ -86,6 +97,8 @@
         teachers.sort().forEach(t => { teacherSelect.innerHTML += `<option value="${t}">${t}</option>`; });
 
         let records = [];
+        let myChart = null; // ตัวแปรเก็บกราฟ
+
         async function loadData() {
             document.getElementById('loader').classList.remove('hidden');
             try { const resp = await fetch(GOOGLE_SCRIPT_URL); records = await resp.json(); renderData(); } catch(e) {}
@@ -96,7 +109,9 @@
             const tbody = document.getElementById('tableBody');
             const search = document.getElementById('search').value.toLowerCase();
             const viewYear = document.getElementById('viewYear').value;
-            tbody.innerHTML = ''; let grandTotal = 0;
+            tbody.innerHTML = ''; 
+            let grandTotal = 0;
+            let summaryData = {}; // สำหรับเก็บข้อมูลทำกราฟ
 
             records.slice().reverse().forEach(r => {
                 if((viewYear === "ALL" || r.academicYear == viewYear) && (r.teacher.toLowerCase().includes(search) || (r.level && r.level.toLowerCase().includes(search)))) {
@@ -114,10 +129,50 @@
                             <button onclick="editItem(${r.rowId})" class="p-2 px-4 bg-blue-50 text-blue-600 rounded-full text-xs font-bold border border-blue-100">แก้ไข</button>
                         </td>
                     </tr>`;
+                    
                     grandTotal += parseFloat(r.hours || 0);
+                    
+                    // รวบรวมข้อมูลสำหรับกราฟ (แยกตามคน)
+                    if(!summaryData[r.teacher]) summaryData[r.teacher] = 0;
+                    summaryData[r.teacher] += parseFloat(r.hours || 0);
                 }
             });
             document.getElementById('grandTotal').innerText = grandTotal.toLocaleString();
+            updateChart(summaryData); // อัปเดตกราฟทุกครั้งที่มีการ render ข้อมูล
+        }
+
+        function updateChart(summaryData) {
+            const ctx = document.getElementById('hoursChart').getContext('2d');
+            const labels = Object.keys(summaryData);
+            const dataValues = Object.values(summaryData);
+
+            if (myChart) myChart.destroy(); // ลบกราฟเก่าก่อนสร้างใหม่
+
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'จำนวนชั่วโมงอบรม',
+                        data: dataValues,
+                        backgroundColor: 'rgba(79, 70, 229, 0.6)',
+                        borderColor: 'rgb(79, 70, 229)',
+                        borderWidth: 1,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { display: false } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
         }
 
         function editItem(id) {
