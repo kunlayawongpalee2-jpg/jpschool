@@ -133,6 +133,7 @@
     </div>
 
     <script>
+        // *** สำคัญ: ต้องใช้ URL จากการ Deploy ล่าสุดของคุณครูเท่านั้น ***
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyEypnUf7bS4mn9n03izkdxcvMgd6N78PfWGM1o2BBjrpG3WeyaCkzWDUtR-Etfo6h0/exec"; 
 
         const teachers = ["นางกิ่งกาญจน์ จันทร์ธง", "นางกัลยา วงศ์ปาลีย์", "นางชนากานต์ ธะนะคำ", "นางชนม์นิภา พงษ์บัณฑิตนุกุล", "นางชัชวาล สิริกรเกษม", "นางนันทนา คำตุ้ย", "นางบุรัสกร วงค์ชัย", "นางพัชรินทร์ ธาวงค์", "นางพิจิตรา บุญมาดวง", "นางพิมลพร อุตเรือน", "นางภูวรินทร์ แสนใจ", "นางมาริสา มหาไม้", "นางยอดยิ่ง กันทะวงค์", "นางวชิรา บุญมี", "นางวรรณวิภา จินาติ", "นางวรารัตน์ แสงสว่าง", "นางวิลดา ตาคำ", "นางศรสวรรค์ ตั๋นวัน", "นางสุจิตรา เมืองแก้ว", "นางสุธาสินี เซ็นแก้ว", "นางสุภาพ ริยะป่า", "นางอัจฉรา บุศยบุตร", "นางอรรถพล สิริรักษ์", "นางอภิวัฒน์ ธะนะคำ", "นายณัฐพงษ์ ไชยกันทา", "นายพิษณุ ธรรมตา", "นายอนุพงษ์ วรรณคำ", "ว่าที่ร้อยตรีหญิงชิดชนก นำมะ", "นางสาวแกมกมล ไชยกันทา", "นางสาวจินตนา กุนนะ", "นางสาวธวิชาทร อินทราทิพย์", "นางสาวปัฐญา สายมณี", "นางสาวพิไลลักษณ์ อะกะเรือน"];
@@ -143,7 +144,7 @@
 
         async function loadData() {
             document.getElementById('loader').classList.remove('hidden');
-            try { const resp = await fetch(GOOGLE_SCRIPT_URL); records = await resp.json(); renderData(); } catch(e) {}
+            try { const resp = await fetch(GOOGLE_SCRIPT_URL); records = await resp.json(); renderData(); } catch(e) { console.error(e); }
             document.getElementById('loader').classList.add('hidden');
         }
 
@@ -155,80 +156,4 @@
             let grandTotal = 0;
 
             records.slice().reverse().forEach(r => {
-                if((viewYear === "ALL" || r.academicYear == viewYear) && (r.teacher.toLowerCase().includes(search) || (r.level && r.level.toLowerCase().includes(search)))) {
-                    tbody.innerHTML += `<tr class="hover:bg-blue-50/40 transition-all">
-                        <td class="px-8 py-6">
-                            <div class="font-bold text-gray-900 text-base mb-1">${r.name}</div>
-                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-bold uppercase tracking-tight">
-                                <span class="text-blue-600">${r.teacher}</span>
-                                <span class="text-gray-300">|</span>
-                                <span class="text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-md">${r.level || '-'}</span>
-                                <span class="text-gray-300">|</span>
-                                <span class="text-gray-400">📍 ${r.location}</span>
-                                <span class="text-gray-300">|</span>
-                                <span class="text-gray-400 font-medium italic">🗓️ ${new Date(r.date).toLocaleDateString('th-TH')}</span>
-                            </div>
-                        </td>
-                        <td class="px-8 py-6 text-center font-black text-indigo-600 text-2xl">${r.hours}</td>
-                        <td class="px-8 py-6 text-center">
-                            <button onclick="editItem(${r.rowId})" class="p-2 px-6 bg-white border border-gray-200 text-gray-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all text-xs font-bold shadow-sm">แก้ไข</button>
-                        </td>
-                    </tr>`;
-                    grandTotal += parseFloat(r.hours || 0);
-                }
-            });
-            document.getElementById('grandTotal').innerText = grandTotal.toLocaleString();
-        }
-
-        function editItem(id) {
-            const r = records.find(x => x.rowId === id);
-            document.getElementById('editRowId').value = r.rowId;
-            document.getElementById('academicYear').value = r.academicYear;
-            document.getElementById('teacherName').value = r.teacher;
-            document.getElementById('level').value = r.level || "";
-            document.getElementById('courseName').value = r.name;
-            document.getElementById('location').value = r.location;
-            document.getElementById('organizer').value = r.organizer;
-            if(r.date) document.getElementById('trainingDate').value = new Date(r.date).toISOString().split('T')[0];
-            document.getElementById('hours').value = r.hours;
-            document.getElementById('formTitle').innerHTML = "📝 กำลังแก้ไขข้อมูล";
-            document.getElementById('submitBtn').innerText = "ยืนยันการแก้ไข";
-            document.getElementById('submitBtn').classList.replace('bg-indigo-600', 'bg-orange-500');
-            document.getElementById('cancelEdit').classList.remove('hidden');
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        document.getElementById('cancelEdit').onclick = () => {
-            document.getElementById('trainingForm').reset();
-            document.getElementById('editRowId').value = "";
-            document.getElementById('formTitle').innerHTML = "📝 บันทึกข้อมูลใหม่";
-            document.getElementById('submitBtn').innerText = "บันทึกข้อมูลลงฐานระบบ";
-            document.getElementById('submitBtn').classList.replace('bg-orange-500', 'bg-indigo-600');
-            document.getElementById('cancelEdit').classList.add('hidden');
-        };
-
-        document.getElementById('trainingForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true; btn.innerText = "กำลังดำเนินการ...";
-            const data = {
-                action: document.getElementById('editRowId').value ? "edit" : "add",
-                rowId: document.getElementById('editRowId').value,
-                academicYear: document.getElementById('academicYear').value,
-                teacher: document.getElementById('teacherName').value,
-                level: document.getElementById('level').value,
-                name: document.getElementById('courseName').value,
-                location: document.getElementById('location').value,
-                organizer: document.getElementById('organizer').value,
-                date: document.getElementById('trainingDate').value,
-                hours: document.getElementById('hours').value
-            };
-            await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
-            document.getElementById('cancelEdit').click();
-            loadData();
-            btn.disabled = false;
-        };
-        loadData();
-    </script>
-</body>
-</html>
+                if((view
