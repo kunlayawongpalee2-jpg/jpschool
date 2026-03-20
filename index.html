@@ -13,7 +13,7 @@
 <body class="p-2 md:p-8">
     <div class="max-w-7xl mx-auto">
         
-        <div class="bg-white rounded-[1.5rem] shadow-sm border border-gray-100 overflow-hidden mb-6">
+        <div class="bg-white rounded-[1.5rem] shadow-sm border border-gray-100 overflow-hidden mb-6 text-sm md:text-base">
             <div class="bg-gradient-to-r from-blue-900 via-indigo-800 to-indigo-900 p-6 text-white relative">
                 <div class="flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
                     <div class="text-center md:text-left">
@@ -30,7 +30,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div class="lg:col-span-4">
-                <div class="bg-white p-6 rounded-[1.5rem] shadow-sm border border-gray-100">
+                <div class="bg-white p-6 rounded-[1.5rem] shadow-sm border border-gray-100 sticky top-4">
                     <h2 id="formTitle" class="font-bold text-gray-800 mb-5 text-lg flex items-center gap-2">
                         <span class="bg-green-500 text-white p-1 rounded-lg text-xs">📝</span> บันทึกข้อมูล
                     </h2>
@@ -85,7 +85,9 @@
                         <option value="2567">2567</option>
                         <option value="2566">2566</option>
                     </select>
-                    <input type="text" id="search" oninput="renderData()" placeholder="ค้นหาชื่อ..." class="w-full md:w-64 px-4 py-2 border rounded-full text-sm outline-none bg-gray-50">
+                    <div class="relative w-full md:w-64">
+                        <input type="text" id="search" oninput="renderData()" placeholder="ค้นหาชื่อ หรือ ระดับชั้น..." class="w-full px-4 py-2 border rounded-full text-sm outline-none bg-gray-50">
+                    </div>
                 </div>
 
                 <div class="bg-white rounded-[1.5rem] shadow-sm border border-gray-100 overflow-hidden">
@@ -93,7 +95,7 @@
                         <table class="w-full text-left text-sm">
                             <thead>
                                 <tr class="bg-gray-50 text-gray-400 text-[10px] font-black border-b">
-                                    <th class="px-4 py-4">รายละเอียด</th>
+                                    <th class="px-4 py-4 uppercase">รายละเอียดการอบรม</th>
                                     <th class="px-4 py-4 text-center">ชม.</th>
                                     <th class="px-4 py-4 text-center">จัดการ</th>
                                 </tr>
@@ -110,7 +112,6 @@
     <script>
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyEypnUf7bS4mn9n03izkdxcvMgd6N78PfWGM1o2BBjrpG3WeyaCkzWDUtR-Etfo6h0/exec"; 
 
-        // แก้ไขรายชื่อครูให้ถูกต้อง 100%
         const teachers = [
             "นางกิ่งกาญจน์ จันทร์ธง", "นางกัลยา วงศ์ปาลีย์", "นางชนากานต์ ธะนะคำ", 
             "นางชนม์นิภา พงษ์บัณฑิตนุกุล", "นางชัชวาล สิริกรเกษม", "นางนันทนา คำตุ้ย", 
@@ -149,15 +150,26 @@
             let grandTotal = 0;
 
             records.slice().reverse().forEach(r => {
-                if((viewYear === "ALL" || r.academicYear == viewYear) && (r.teacher.toLowerCase().includes(search))) {
-                    tbody.innerHTML += `<tr>
+                // ส่วนแก้ไข: ให้ค้นหาได้ทั้งชื่อ (r.teacher) และ ระดับชั้น (r.level)
+                const teacherMatch = r.teacher.toLowerCase().includes(search);
+                const levelMatch = (r.level || "").toLowerCase().includes(search);
+                const yearMatch = (viewYear === "ALL" || r.academicYear == viewYear);
+
+                if(yearMatch && (teacherMatch || levelMatch)) {
+                    tbody.innerHTML += `<tr class="hover:bg-blue-50/50">
                         <td class="px-4 py-4">
-                            <div class="font-bold text-gray-900">${r.name}</div>
-                            <div class="text-[10px] font-bold text-blue-600">${r.teacher} | ${r.level || '-'}</div>
+                            <div class="font-bold text-gray-900 mb-0.5">${r.name}</div>
+                            <div class="text-[10px] font-bold">
+                                <span class="text-blue-600">${r.teacher}</span> 
+                                <span class="text-gray-300 mx-1">|</span> 
+                                <span class="text-indigo-500">${r.level || '-'}</span>
+                                <span class="text-gray-300 mx-1">|</span>
+                                <span class="text-gray-400 font-normal italic">${new Date(r.date).toLocaleDateString('th-TH')}</span>
+                            </div>
                         </td>
-                        <td class="px-4 py-4 text-center font-bold text-indigo-600">${r.hours}</td>
+                        <td class="px-4 py-4 text-center font-black text-indigo-600 text-lg">${r.hours}</td>
                         <td class="px-4 py-4 text-center">
-                            <button onclick="editItem(${r.rowId})" class="text-[10px] p-1 px-3 bg-gray-100 rounded-lg font-bold">แก้</button>
+                            <button onclick="editItem(${r.rowId})" class="text-[10px] p-1.5 px-3 bg-gray-100 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition-colors">แก้ไข</button>
                         </td>
                     </tr>`;
                     grandTotal += parseFloat(r.hours || 0);
@@ -213,7 +225,7 @@
                 await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
                 document.getElementById('cancelEdit').click();
                 loadData();
-            } catch(e) { alert("ล้มเหลว"); }
+            } catch(e) { alert("เกิดข้อผิดพลาด"); }
             btn.disabled = false;
         };
         loadData();
