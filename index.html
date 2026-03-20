@@ -17,10 +17,9 @@
                 <div class="bg-white/10 p-4 rounded-2xl border border-white/20 hidden md:block text-4xl">🏛️</div>
                 <div>
                     <h1 class="text-3xl font-black tracking-tight uppercase">Jirapittaya School</h1>
-                    <p class="text-indigo-200 font-medium">ระบบบันทึกการพัฒนาบุคลากร (ปีการศึกษา 2566-2568)</p>
+                    <p class="text-indigo-200 font-medium">ระบบบันทึกการพัฒนาบุคลากร (A-I Format)</p>
                 </div>
             </div>
-
             <div class="bg-indigo-600/30 px-8 py-4 rounded-2xl text-center border border-white/20 backdrop-blur-sm min-w-[220px]">
                 <p class="text-[10px] uppercase tracking-widest opacity-70 mb-1">ชั่วโมงอบรมรวม (ตามปีที่เลือก)</p>
                 <p id="grandTotal" class="text-4xl font-black text-yellow-400">0</p>
@@ -37,8 +36,8 @@
                         <input type="hidden" id="editRowId">
                         
                         <div>
-                            <label class="text-[11px] font-bold text-gray-400 ml-1">ปีการศึกษาที่อบรม</label>
-                            <select id="academicYear" class="w-full mt-1 p-3 border rounded-xl bg-gray-50 font-bold outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                            <label class="text-[11px] font-bold text-gray-400 ml-1">ปีการศึกษา</label>
+                            <select id="academicYear" class="w-full mt-1 p-3 border rounded-xl bg-gray-50 font-bold outline-none focus:ring-2 focus:ring-indigo-500">
                                 <option value="2568">2568</option>
                                 <option value="2567">2567</option>
                                 <option value="2566">2566</option>
@@ -52,8 +51,17 @@
                             </select>
                         </div>
 
+                        <div>
+                            <label class="text-[11px] font-bold text-gray-400 ml-1">ระดับชั้น</label>
+                            <select id="level" required class="w-full mt-1 p-3 border rounded-xl bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="">-- เลือกระดับชั้น --</option>
+                                <option value="ครูประถม">ครูประถม</option>
+                                <option value="ครูอนุบาล">ครูอนุบาล</option>
+                            </select>
+                        </div>
+
                         <input type="text" id="courseName" placeholder="ชื่อหลักสูตรที่เข้าอบรม" required class="w-full p-3 border rounded-xl bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-500">
-                        <input type="text" id="location" placeholder="สถานที่ (เช่น ออนไลน์/ชื่อ รร.)" required class="w-full p-3 border rounded-xl bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-500">
+                        <input type="text" id="location" placeholder="สถานที่" required class="w-full p-3 border rounded-xl bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-500">
                         <input type="text" id="organizer" placeholder="หน่วยงานที่จัดอบรม" required class="w-full p-3 border rounded-xl bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-500">
                         
                         <div class="grid grid-cols-2 gap-3">
@@ -74,7 +82,6 @@
             </div>
 
             <div class="lg:col-span-8 space-y-6">
-                
                 <div class="bg-white p-4 rounded-3xl border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 shadow-sm">
                     <div class="flex items-center gap-2">
                         <span class="text-sm font-bold text-gray-600 italic">แสดงผลปี:</span>
@@ -86,19 +93,12 @@
                         </select>
                     </div>
                     <div class="relative w-full md:w-64">
-                        <input type="text" id="search" oninput="renderData()" placeholder="พิมพ์ชื่อคุณครูเพื่อค้นหา..." class="w-full pl-10 pr-4 py-2 border rounded-full text-sm outline-none focus:ring-2 focus:ring-indigo-300">
+                        <input type="text" id="search" oninput="renderData()" placeholder="ค้นหาชื่อ/ระดับชั้น..." class="w-full pl-10 pr-4 py-2 border rounded-full text-sm outline-none focus:ring-2 focus:ring-indigo-300">
                         <span class="absolute left-4 top-2 text-gray-300">🔍</span>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                    <h2 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="text-indigo-500">📊</span> ชั่วโมงสะสมรายบุคคล
-                    </h2>
-                    <div id="summaryArea" class="flex flex-wrap gap-2"></div>
-                </div>
-
-                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                     <table class="w-full text-left">
                         <thead>
                             <tr class="bg-gray-50 text-gray-400 text-[10px] uppercase font-black tracking-widest border-b">
@@ -117,10 +117,9 @@
     </div>
 
     <script>
-        // *** ใส่ URL ของคุณที่นี่ ***
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFIprQM2tFlYSNsOCyavl7HUnp0V9MzjGQy1xcvx1iGbwbWLmEYV9sMAgEUtOsoqNW/exec"; 
 
-        const teachers = ["นางพัชรินทร์ ธาวงค์ ", "นางสาวธวิชาทร อินทราทิพย์ ", "นางสาวชนม์นิภา พงษ์บัณฑิตนุกุล ", "นางสาวแกมกมล ไชยกันทา ", "นายณัฐพงษ์ ไชยกันทา ", "นางสาววรรณวิภา จินาติ ", "นางสาววิลดา ตาคำ ", "นางสาวกัลยา วงศ์ปาลีย์ ", "นางสาวพิมลพร อุตเรือน ", "ว่าที่ร้อยตรีหญิงชิดชนก นำมะ ", "นางสาวสุจิตรา เมืองแก้ว ", "นางสาวบุรัสกร วงค์ชัย ", "นายอภิวัฒน์ ธะนะคำ ", "นางสาวพิจิตรา บุญมาดวง ", "นางสาวศรสวรรค์ ตั๋นวัน ", "นายอนุพงษ์ วรรณคำ ", "นางโสภิณ กันทะวงค์ ", "นางสุภาพ ริยะป่า ", "นายชัชวาล สิริกรเกษม ", "นางชนากานต์ ธะนะคำ ", "นางวรารัตน์ แสงสว่าง ", "นางสาวจินตนา กุนนะ ", "นายพิษณุ ธรรมตา ", "นายยอดยิ่ง กันทะวงค์ ", "นายอรรถพล สิริรักษ์ ", "นางกิ่งกาญจน์ จันทร์ธง ", "นางสุธาสินี เซ็นแก้ว ", "นางสาววชิรา บุญมี ", "นางสาวภูวรินทร์ แสนใจ ", "นางสาวกฤษชาญา ศิณารา ", "นางสาวมาริสา มหาไม้ ", "นางสาวพิไลลักษณ์ อะกะเรือน ", "นางสาวอัจฉรา บุศยบุตร ", "นางสาวปัฐญา สายมณี ", "นางนันทนา คำตุ้ย "];
+        const teachers = ["นางพัชรินทร์ ธาวงค์", "นางสาวธวิชาทร อินทราทิพย์", "นางสาวชนม์นิภา พงษ์บัณฑิตนุกุล", "นางสาวแกมกมล ไชยกันทา", "นายณัฐพงษ์ ไชยกันทา", "นางสาววรรณวิภา จินาติ", "นางสาววิลดา ตาคำ", "นางสาวกัลยา วงศ์ปาลีย์", "นางสาวพิมลพร อุตเรือน", "ว่าที่ร้อยตรีหญิงชิดชนก นำมะ", "นางสาวสุจิตรา เมืองแก้ว", "นางสาวบุรัสกร วงค์ชัย", "นายอภิวัฒน์ ธะนะคำ", "นางสาวพิจิตรา บุญมาดวง", "นางสาวศรสวรรค์ ตั๋นวัน", "นายอนุพงษ์ วรรณคำ", "นางโโภิณ กันทะวงค์", "นางสุภาพ ริยะป่า", "นายชัชวาล สิริกรเกษม", "นางชนากานต์ ธะนะคำ", "นางวรารัตน์ แสงสว่าง", "นางสาวจินตนา กุนนะ", "นายพิษณุ ธรรมตา", "นายยอดยิ่ง กันทะวงค์", "นายอรรถพล สิริรักษ์", "นางกิ่งกาญจน์ จันทร์ธง", "นางสุธาสินี เซ็นแก้ว", "นางสาววชิรา บุญมี", "นางสาวภูวรินทร์ แสนใจ", "นางสาวกฤษชาญา ศิณารา", "นางสาวมาริสา มหาไม้", "นางสาวพิไลลักษณ์ อะกะเรือน", "นางสาวอัจฉรา บุศยบุตร", "นางสาวปัฐญา สายมณี", "นางนันทนา คำตุ้ย"];
         
         const teacherSelect = document.getElementById('teacherName');
         teachers.sort().forEach(t => { teacherSelect.innerHTML += `<option value="${t}">${t}</option>`; });
@@ -139,50 +138,40 @@
 
         function renderData() {
             const tbody = document.getElementById('tableBody');
-            const summaryArea = document.getElementById('summaryArea');
             const search = document.getElementById('search').value.toLowerCase();
             const viewYear = document.getElementById('viewYear').value;
-            
-            tbody.innerHTML = ''; summaryArea.innerHTML = '';
-            let sums = {};
+            tbody.innerHTML = ''; 
             let grandTotal = 0;
 
             records.slice().reverse().forEach(r => {
                 const yearMatch = (viewYear === "ALL" || r.academicYear == viewYear);
-                const searchMatch = r.teacher.includes(search);
+                const searchMatch = r.teacher.toLowerCase().includes(search) || (r.level && r.level.toLowerCase().includes(search));
 
                 if(yearMatch && searchMatch) {
                     tbody.innerHTML += `<tr class="hover:bg-indigo-50/50 transition-all">
                         <td class="px-6 py-4">
                             <div class="font-bold text-indigo-900">${r.teacher}</div>
-                            <div class="text-[10px] font-bold text-gray-400">ปีการศึกษา ${r.academicYear}</div>
+                            <div class="text-[10px] font-bold text-gray-400">${r.level} | ปี ${r.academicYear}</div>
                         </td>
                         <td class="px-6 py-4">
                             <div class="font-medium text-gray-800 leading-tight">${r.name}</div>
-                            <div class="text-[10px] text-indigo-500 font-bold mt-1">📍 ${r.location} | ${r.date}</div>
+                            <div class="text-[10px] text-indigo-500 font-bold mt-1">📍 ${r.location} | วันที่อบรม: ${formatDate(r.date)}</div>
                         </td>
                         <td class="px-6 py-4 text-center font-black text-indigo-600 text-lg">${r.hours}</td>
                         <td class="px-6 py-4 text-center">
-                            <button onclick="editItem(${r.rowId})" class="p-2 px-4 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition-all text-xs font-bold border border-blue-100">แก้ไขข้อมูล</button>
+                            <button onclick="editItem(${r.rowId})" class="p-2 px-4 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition-all text-xs font-bold border border-blue-100">แก้ไข</button>
                         </td>
                     </tr>`;
-                }
-
-                if(yearMatch) {
-                    sums[r.teacher] = (sums[r.teacher] || 0) + parseFloat(r.hours);
                     grandTotal += parseFloat(r.hours);
                 }
             });
-
-            Object.keys(sums).sort().forEach(name => {
-                summaryArea.innerHTML += `
-                <div class="bg-white border border-gray-100 px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-sm">
-                    <span class="text-[10px] font-bold text-gray-500">${name}</span>
-                    <span class="bg-indigo-600 text-white px-2 py-0.5 rounded-lg text-xs font-black">${sums[name]}</span>
-                </div>`;
-            });
-
             document.getElementById('grandTotal').innerText = grandTotal.toLocaleString();
+        }
+
+        function formatDate(d) {
+            if(!d) return "-";
+            const date = new Date(d);
+            return date.toLocaleDateString('th-TH');
         }
 
         function editItem(id) {
@@ -190,12 +179,19 @@
             document.getElementById('editRowId').value = r.rowId;
             document.getElementById('academicYear').value = r.academicYear;
             document.getElementById('teacherName').value = r.teacher;
+            document.getElementById('level').value = r.level;
             document.getElementById('courseName').value = r.name;
             document.getElementById('location').value = r.location;
             document.getElementById('organizer').value = r.organizer;
-            document.getElementById('trainingDate').value = r.date;
-            document.getElementById('hours').value = r.hours;
             
+            // ปรับรูปแบบวันที่ให้ใส่ใน input date ได้ (yyyy-mm-dd)
+            if(r.date) {
+                const d = new Date(r.date);
+                const dateStr = d.toISOString().split('T')[0];
+                document.getElementById('trainingDate').value = dateStr;
+            }
+            
+            document.getElementById('hours').value = r.hours;
             document.getElementById('formTitle').innerHTML = "📝 กำลังแก้ไขข้อมูล";
             document.getElementById('submitBtn').innerText = "ยืนยันการแก้ไขข้อมูล";
             document.getElementById('submitBtn').classList.replace('bg-indigo-600', 'bg-orange-600');
@@ -223,6 +219,7 @@
                 rowId: id,
                 academicYear: document.getElementById('academicYear').value,
                 teacher: document.getElementById('teacherName').value,
+                level: document.getElementById('level').value,
                 name: document.getElementById('courseName').value,
                 location: document.getElementById('location').value,
                 organizer: document.getElementById('organizer').value,
