@@ -4,226 +4,63 @@
     <meta charset="UTF-8">
     <title>ระบบบันทึกการอบรม - โรงเรียนจิรพิทยา</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700;800&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Sarabun', sans-serif; background-color: #f8fafc; }</style>
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    </style>
 </head>
-<body class="p-4 md:p-6">
-    <div class="max-w-6xl mx-auto">
-        <div class="bg-gradient-to-r from-indigo-900 to-slate-800 text-white p-8 rounded-3xl shadow-xl mb-6 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-                <h1 class="text-3xl font-black uppercase">Jirapittaya School</h1>
-                <p class="text-indigo-200">ระบบบันทึกการพัฒนาบุคลากร (Column A-I)</p>
-            </div>
-            <div class="bg-indigo-600/30 px-8 py-4 rounded-2xl text-center border border-white/20 backdrop-blur-sm">
-                <p class="text-[10px] uppercase opacity-70 mb-1">ชั่วโมงอบรมรวม (ปีที่เลือก)</p>
-                <p id="grandTotal" class="text-4xl font-black text-yellow-400">0</p>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 gap-6 mb-6">
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                <h2 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <span class="bg-amber-500 text-white p-1 rounded-lg text-sm">📊</span> สรุปชั่วโมงรายบุคคล
-                </h2>
-                <div class="h-[300px] w-full">
-                    <canvas id="hoursChart"></canvas>
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        
+        <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden mb-8">
+            <div class="bg-gradient-to-r from-blue-900 via-indigo-800 to-indigo-900 p-8 text-white relative">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                    <div class="flex items-center gap-6">
+                        <div class="bg-white p-3 rounded-2xl shadow-lg text-4xl hidden md:block">🏫</div>
+                        <div class="text-center md:text-left">
+                            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-1">โรงเรียนจิรพิทยา</h1>
+                            <p class="text-indigo-200 font-medium tracking-wide uppercase text-sm">ระบบสารสนเทศบันทึกการพัฒนาบุคลากร รายบุคคล</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="bg-white/10 backdrop-blur-md px-8 py-4 rounded-2xl border border-white/20 text-center min-w-[180px]">
+                            <p class="text-[10px] uppercase font-bold text-indigo-200 mb-1">ปีการศึกษาที่เลือก</p>
+                            <p id="grandTotal" class="text-4xl font-black text-yellow-400">0</p>
+                            <p class="text-[11px] text-white/60 mt-1">ชั่วโมงอบรมรวมทั้งหมด</p>
+                        </div>
+                    </div>
                 </div>
+                <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32"></div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div class="lg:col-span-4">
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 sticky top-6">
-                    <h2 id="formTitle" class="font-bold text-gray-800 mb-6 flex items-center gap-2"><span class="bg-indigo-600 text-white p-1 rounded-lg text-sm">➕</span> บันทึกข้อมูล</h2>
-                    <form id="trainingForm" class="space-y-4 text-sm">
+                <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 sticky top-8">
+                    <h2 id="formTitle" class="font-bold text-gray-800 mb-6 text-lg flex items-center gap-3">
+                        <span class="bg-green-500 text-white p-1.5 rounded-lg text-xs">📝</span> บันทึกข้อมูลใหม่
+                    </h2>
+                    <form id="trainingForm" class="space-y-5 text-sm">
                         <input type="hidden" id="editRowId">
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-400 mb-1 block">ปีการศึกษา</label>
+                                <select id="academicYear" class="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 font-bold focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    <option value="2568">2568</option><option value="2567">2567</option><option value="2566">2566</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-400 mb-1 block">ระดับชั้น</label>
+                                <select id="level" required class="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-500 outline-none font-bold">
+                                    <option value="">-- ระดับ --</option><option value="ครูประถม">ครูประถม</option><option value="ครูอนุบาล">ครูอนุบาล</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div>
-                            <label class="text-[11px] font-bold text-gray-400">ปีการศึกษา</label>
-                            <select id="academicYear" class="w-full mt-1 p-3 border rounded-xl bg-gray-50 font-bold outline-none focus:ring-2 focus:ring-indigo-500">
-                                <option value="2568">2568</option><option value="2567">2567</option><option value="2566">2566</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-[11px] font-bold text-gray-400">ชื่อ-นามสกุล</label>
-                            <select id="teacherName" required class="w-full mt-1 p-3 border rounded-xl bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-500"><option value="">-- เลือกชื่อ --</option></select>
-                        </div>
-                        <div>
-                            <label class="text-[11px] font-bold text-gray-400">ระดับชั้น</label>
-                            <select id="level" required class="w-full mt-1 p-3 border rounded-xl bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-500">
-                                <option value="">-- เลือกระดับชั้น --</option><option value="ครูประถม">ครูประถม</option><option value="ครูอนุบาล">ครูอนุบาล</option>
-                            </select>
-                        </div>
-                        <input type="text" id="courseName" placeholder="ชื่อหลักสูตร" required class="w-full p-3 border rounded-xl bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-500">
-                        <input type="text" id="location" placeholder="สถานที่" required class="w-full p-3 border rounded-xl bg-gray-50">
-                        <input type="text" id="organizer" placeholder="หน่วยงานที่จัด" required class="w-full p-3 border rounded-xl bg-gray-50">
-                        <div class="grid grid-cols-2 gap-3">
-                            <input type="date" id="trainingDate" required class="w-full p-3 border rounded-xl bg-gray-50">
-                            <input type="number" id="hours" placeholder="ชั่วโมง" step="0.1" required class="w-full p-3 border rounded-xl bg-gray-50 text-center font-bold">
-                        </div>
-                        <button type="submit" id="submitBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl shadow-md transition-all">บันทึกข้อมูล</button>
-                        <button type="button" id="cancelEdit" class="w-full bg-gray-200 text-gray-600 py-3 rounded-2xl font-bold hidden">ยกเลิกการแก้ไข</button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="lg:col-span-8 space-y-6">
-                <div class="bg-white p-4 rounded-3xl border border-gray-100 flex justify-between items-center gap-4 shadow-sm">
-                    <select id="viewYear" onchange="renderData()" class="p-2 px-5 border rounded-full font-bold text-indigo-700 bg-indigo-50 outline-none">
-                        <option value="ALL">ทุกปีการศึกษา</option><option value="2568" selected>2568</option><option value="2567">2567</option><option value="2566">2566</option>
-                    </select>
-                    <input type="text" id="search" oninput="renderData()" placeholder="ค้นหาชื่อ/ระดับชั้น..." class="w-full md:w-64 pl-4 pr-4 py-2 border rounded-full text-sm outline-none focus:ring-2 focus:ring-indigo-300">
-                </div>
-                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="bg-gray-50 text-gray-400 text-[10px] uppercase font-black border-b">
-                                <th class="px-6 py-4">ข้อมูลบุคลากร</th><th class="px-6 py-4">รายละเอียด</th><th class="px-6 py-4 text-center">ชม.</th><th class="px-6 py-4 text-center">แก้ไข</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody" class="divide-y divide-gray-50 text-sm"></tbody>
-                    </table>
-                    <div id="loader" class="text-center py-20 text-gray-400 hidden italic">กำลังเชื่อมต่อฐานข้อมูล...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyEypnUf7bS4mn9n03izkdxcvMgd6N78PfWGM1o2BBjrpG3WeyaCkzWDUtR-Etfo6h0/exec"; 
-
-        const teachers = ["นางกิ่งกาญจน์ จันทร์ธง", "นางกัลยา วงศ์ปาลีย์", "นางชนากานต์ ธะนะคำ", "นางชนม์นิภา พงษ์บัณฑิตนุกุล", "นางชัชวาล สิริกรเกษม", "นางนันทนา คำตุ้ย", "นางบุรัสกร วงค์ชัย", "นางพัชรินทร์ ธาวงค์", "นางพิจิตรา บุญมาดวง", "นางพิมลพร อุตเรือน", "นางภูวรินทร์ แสนใจ", "นางมาริสา มหาไม้", "นางยอดยิ่ง กันทะวงค์", "นางวชิรา บุญมี", "นางวรรณวิภา จินาติ", "นางวรารัตน์ แสงสว่าง", "นางวิลดา ตาคำ", "นางศรสวรรค์ ตั๋นวัน", "นางสุจิตรา เมืองแก้ว", "นางสุธาสินี เซ็นแก้ว", "นางสุภาพ ริยะป่า", "นางอัจฉรา บุศยบุตร", "นางอรรถพล สิริรักษ์", "นางอภิวัฒน์ ธะนะคำ", "นายณัฐพงษ์ ไชยกันทา", "นายพิษณุ ธรรมตา", "นายอนุพงษ์ วรรณคำ", "ว่าที่ร้อยตรีหญิงชิดชนก นำมะ", "นางสาวแกมกมล ไชยกันทา", "นางสาวจินตนา กุนนะ", "นางสาวธวิชาทร อินทราทิพย์", "นางสาวปัฐญา สายมณี", "นางสาวพิไลลักษณ์ อะกะเรือน"];
-        const teacherSelect = document.getElementById('teacherName');
-        teachers.sort().forEach(t => { teacherSelect.innerHTML += `<option value="${t}">${t}</option>`; });
-
-        let records = [];
-        let myChart = null; // ตัวแปรเก็บกราฟ
-
-        async function loadData() {
-            document.getElementById('loader').classList.remove('hidden');
-            try { const resp = await fetch(GOOGLE_SCRIPT_URL); records = await resp.json(); renderData(); } catch(e) {}
-            document.getElementById('loader').classList.add('hidden');
-        }
-
-        function renderData() {
-            const tbody = document.getElementById('tableBody');
-            const search = document.getElementById('search').value.toLowerCase();
-            const viewYear = document.getElementById('viewYear').value;
-            tbody.innerHTML = ''; 
-            let grandTotal = 0;
-            let summaryData = {}; // สำหรับเก็บข้อมูลทำกราฟ
-
-            records.slice().reverse().forEach(r => {
-                if((viewYear === "ALL" || r.academicYear == viewYear) && (r.teacher.toLowerCase().includes(search) || (r.level && r.level.toLowerCase().includes(search)))) {
-                    tbody.innerHTML += `<tr class="hover:bg-indigo-50/50">
-                        <td class="px-6 py-4">
-                            <div class="font-bold text-indigo-900">${r.teacher}</div>
-                            <div class="text-[10px] font-bold text-gray-400">${r.level || '-'} | ปีการศึกษา ${r.academicYear}</div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <div class="font-medium text-gray-800 leading-tight">${r.name}</div>
-                            <div class="text-[10px] text-indigo-500 font-bold mt-1">📍 ${r.location} | ${new Date(r.date).toLocaleDateString('th-TH')}</div>
-                        </td>
-                        <td class="px-6 py-4 text-center font-black text-indigo-600 text-lg">${r.hours}</td>
-                        <td class="px-6 py-4 text-center">
-                            <button onclick="editItem(${r.rowId})" class="p-2 px-4 bg-blue-50 text-blue-600 rounded-full text-xs font-bold border border-blue-100">แก้ไข</button>
-                        </td>
-                    </tr>`;
-                    
-                    grandTotal += parseFloat(r.hours || 0);
-                    
-                    // รวบรวมข้อมูลสำหรับกราฟ (แยกตามคน)
-                    if(!summaryData[r.teacher]) summaryData[r.teacher] = 0;
-                    summaryData[r.teacher] += parseFloat(r.hours || 0);
-                }
-            });
-            document.getElementById('grandTotal').innerText = grandTotal.toLocaleString();
-            updateChart(summaryData); // อัปเดตกราฟทุกครั้งที่มีการ render ข้อมูล
-        }
-
-        function updateChart(summaryData) {
-            const ctx = document.getElementById('hoursChart').getContext('2d');
-            const labels = Object.keys(summaryData);
-            const dataValues = Object.values(summaryData);
-
-            if (myChart) myChart.destroy(); // ลบกราฟเก่าก่อนสร้างใหม่
-
-            myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'จำนวนชั่วโมงอบรม',
-                        data: dataValues,
-                        backgroundColor: 'rgba(79, 70, 229, 0.6)',
-                        borderColor: 'rgb(79, 70, 229)',
-                        borderWidth: 1,
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, grid: { display: false } },
-                        x: { grid: { display: false } }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-        }
-
-        function editItem(id) {
-            const r = records.find(x => x.rowId === id);
-            document.getElementById('editRowId').value = r.rowId;
-            document.getElementById('academicYear').value = r.academicYear;
-            document.getElementById('teacherName').value = r.teacher;
-            document.getElementById('level').value = r.level || "";
-            document.getElementById('courseName').value = r.name;
-            document.getElementById('location').value = r.location;
-            document.getElementById('organizer').value = r.organizer;
-            if(r.date) document.getElementById('trainingDate').value = new Date(r.date).toISOString().split('T')[0];
-            document.getElementById('hours').value = r.hours;
-            document.getElementById('formTitle').innerHTML = "📝 แก้ไขข้อมูล";
-            document.getElementById('submitBtn').innerText = "ยืนยันการแก้ไข";
-            document.getElementById('submitBtn').classList.replace('bg-indigo-600', 'bg-orange-600');
-            document.getElementById('cancelEdit').classList.remove('hidden');
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        document.getElementById('cancelEdit').onclick = () => {
-            document.getElementById('trainingForm').reset();
-            document.getElementById('editRowId').value = "";
-            document.getElementById('formTitle').innerHTML = "➕ บันทึกข้อมูล";
-            document.getElementById('submitBtn').innerText = "บันทึกข้อมูล";
-            document.getElementById('submitBtn').classList.replace('bg-orange-600', 'bg-indigo-600');
-            document.getElementById('cancelEdit').classList.add('hidden');
-        };
-
-        document.getElementById('trainingForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true; btn.innerText = "กำลังบันทึก...";
-            const data = {
-                action: document.getElementById('editRowId').value ? "edit" : "add",
-                rowId: document.getElementById('editRowId').value,
-                academicYear: document.getElementById('academicYear').value,
-                teacher: document.getElementById('teacherName').value,
-                level: document.getElementById('level').value,
-                name: document.getElementById('courseName').value,
-                location: document.getElementById('location').value,
-                organizer: document.getElementById('organizer').value,
-                date: document.getElementById('trainingDate').value,
-                hours: document.getElementById('hours').value
-            };
-            await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
-            document.getElementById('cancelEdit').click();
-            loadData();
-            btn.disabled = false;
-        };
-        loadData();
-    </script>
-</body>
-</html>
+                            <label class="text-[11px] font-bold text-gray-400 mb-1 block">ชื่อ-นามสกุลบุคลากร</label>
+                            <select id="teacherName" required class="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-500 outline-none font-bold">
+                                <option value="">-- กรุณาเลือกชื่อ --</option>
+                            </
