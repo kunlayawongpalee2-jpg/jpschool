@@ -16,7 +16,7 @@
                     <h1 class="text-2xl md:text-4xl font-extrabold">โรงเรียนจิรพิทยา</h1>
                     <p class="text-indigo-200">ระบบบันทึกการพัฒนาบุคลากร รายบุคคล</p>
                 </div>
-                <div class="bg-white/10 px-6 py-3 rounded-2xl border border-white/20">
+                <div class="bg-white/10 px-6 py-3 rounded-2xl border border-white/20 text-center">
                     <p id="grandTotal" class="text-3xl font-black text-yellow-400">0</p>
                     <p class="text-[10px] uppercase font-bold text-white/60">ชั่วโมงอบรมรวม</p>
                 </div>
@@ -34,7 +34,7 @@
                             <select id="level" required class="p-3 border rounded-xl bg-gray-50"><option value="">-- ระดับ --</option><option value="ครูประถม">ครูประถม</option><option value="ครูอนุบาล">ครูอนุบาล</option></select>
                         </div>
                         <select id="teacherName" required class="w-full p-3 border rounded-xl bg-gray-50 font-bold"><option value="">-- เลือกชื่อครู --</option></select>
-                        <input type="text" id="courseName" placeholder="ชื่อหลักสูตรที่อบรม" required class="w-full p-3 border rounded-xl bg-gray-50">
+                        <input type="text" id="courseName" placeholder="ชื่อหลักสูตรที่อบรม" required class="w-full p-3 border rounded-xl bg-gray-50 font-bold">
                         <div class="grid grid-cols-2 gap-3">
                             <input type="text" id="location" placeholder="สถานที่" required class="p-3 border rounded-xl bg-gray-50">
                             <input type="text" id="organizer" placeholder="หน่วยงานที่จัด" required class="p-3 border rounded-xl bg-gray-50">
@@ -75,18 +75,29 @@
     </div>
 
     <script>
-        // 1. นำ URL จากการ Deploy มาวางในเครื่องหมายคำพูดด้านล่างนี้
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJ-VVKZzq5sEeyl906HRzK6ewT4hHzIDgo_HtRT_uP2a7y39swYkQfW89OrZFIEgdH/exec"; 
+        // *** วาง URL เว็บแอปของคุณครูตรงนี้ ***
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJlRUSDRbz-mdFYpd1DCNZEglGB7-oNjr7nzBwpTjI-I4YgtMpopw7Et8R0sxO7BUG/exec"; 
 
         const teachers = ["นางกิ่งกาญจน์ จันทร์ธง", "นางสาวกัลยา วงศ์ปาลีย์", "นางชนากานต์ ธะนะคำ", "นางสาวชนม์นิภา พงษ์บัณฑิตนุกุล", "นายชัชวาล สิริกรเกษม", "นางนันทนา คำตุ้ย", "นางสาวบุรัสกร วงค์ชัย", "นางพัชรินทร์ ธาวงค์", "นางสาวพิจิตรา บุญมาดวง", "นางสาวพิมลพร อุตเรือน", "นางสาวภูวรินทร์ แสนใจ", "นางสาวมาริสา มหาไม้", "นายยอดยิ่ง กันทะวงค์", "นางวชิรา บุญมี", "นางโสภิณ กันทะวงค์", "นางสาววรรณวิภา จินาติ", "นางวรารัตน์ แสงสว่าง", "นางสาววิลดา ตาคำ", "นางสาวศรสวรรค์ ตั๋นวัน", "นางสาวสุจิตรา เมืองแก้ว", "นางสุธาสินี เซ็นแก้ว", "นางสุภาพ ริยะป่า", "นางสาวอัจฉรา บุศยบุตร", "นายอรรถพล สิริรักษ์", "นายอภิวัฒน์ ธะนะคำ", "นายนัฐพงษ์ ไชยกันทา", "นายพิษณุ ธรรมตา", "นายอนุพงษ์ วรรณคำ", "ว่าที่ร้อยตรีหญิงชิดชนก นำมะ", "นางสาวแกมกมล ไชยกันทา", "นางสาวจินตนา กุนนะ", "นางสาวธวิชาทร อินทราทิพย์", "นางสาวกฤษชาญา ศิณารา", "นางสาวปัฐญา สายมณี", "นางสาวพิไลลักษณ์ อะกะเรือน"].sort();
         const teacherSelect = document.getElementById('teacherName');
         teachers.forEach(t => { let opt = document.createElement('option'); opt.value = t; opt.innerHTML = t; teacherSelect.appendChild(opt); });
 
         let records = [];
-        function formatDateForInput(dateStr) {
-            if (!dateStr || dateStr === "") return "";
-            const d = new Date(dateStr);
-            return isNaN(d.getTime()) ? "" : d.toISOString().split('T')[0];
+        
+        // แปลงวันที่สำหรับใส่ใน input date (yyyy-mm-dd)
+        function formatDateForInput(dateVal) {
+            if (!dateVal) return "";
+            const d = new Date(dateVal);
+            if (isNaN(d.getTime())) return "";
+            return d.toISOString().split('T')[0];
+        }
+
+        // แปลงวันที่สำหรับแสดงในตาราง (ว.ม.ป.)
+        function formatDateForTable(dateVal) {
+            if (!dateVal) return "";
+            const d = new Date(dateVal);
+            if (isNaN(d.getTime())) return "";
+            return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
         }
 
         async function loadData() {
@@ -108,15 +119,20 @@
             records.slice().reverse().forEach(r => {
                 if((viewYear === "ALL" || r.academicYear.toString() === viewYear) && 
                    (r.teacher.toLowerCase().includes(search) || r.name.toLowerCase().includes(search))) {
+                    
+                    const dStart = formatDateForTable(r.date);
+                    const dEnd = r.endDate ? ' - ' + formatDateForTable(r.endDate) : '';
+
                     tbody.innerHTML += `<tr class="hover:bg-blue-50/50 transition-colors">
                         <td class="px-4 py-4">
                             <div class="font-bold text-gray-900">${r.name}</div>
                             <div class="text-[10px] font-bold text-blue-600">${r.teacher} | ${r.level}</div>
-                            <div class="text-[9px] text-gray-400 italic">${r.location} (${r.organizer})</div>
+                            <div class="text-[10px] text-indigo-500 font-bold mt-1 italic">📅 ${dStart}${dEnd}</div>
+                            <div class="text-[9px] text-gray-400 mt-0.5">${r.location} (${r.organizer})</div>
                         </td>
                         <td class="px-4 py-4 text-center font-black text-indigo-600 text-lg">${r.hours}</td>
                         <td class="px-4 py-4 text-center">
-                            <button onclick="editItem('${r.rowId}')" class="p-1 px-4 bg-blue-50 text-blue-700 rounded-lg text-xs font-bold hover:bg-blue-100">แก้ไข</button>
+                            <button onclick="editItem('${r.rowId}')" class="p-1 px-4 bg-blue-50 text-blue-700 rounded-lg text-xs font-bold hover:bg-blue-100 transition-all">แก้ไข</button>
                         </td>
                     </tr>`;
                     total += parseFloat(r.hours || 0);
@@ -138,6 +154,7 @@
             document.getElementById('hours').value = r.hours;
             document.getElementById('trainingDate').value = formatDateForInput(r.date);
             document.getElementById('endDate').value = formatDateForInput(r.endDate);
+            
             document.getElementById('formTitle').innerText = "📝 แก้ไขข้อมูล";
             document.getElementById('submitBtn').innerText = "บันทึกการแก้ไข";
             document.getElementById('cancelEdit').classList.remove('hidden');
@@ -156,6 +173,7 @@
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             btn.disabled = true; btn.innerText = "กำลังบันทึก...";
+            
             const data = {
                 action: document.getElementById('editRowId').value ? "edit" : "add",
                 rowId: document.getElementById('editRowId').value,
@@ -169,13 +187,15 @@
                 date: document.getElementById('trainingDate').value,
                 endDate: document.getElementById('endDate').value
             };
+
             try {
                 await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
                 document.getElementById('cancelEdit').click();
                 await loadData();
-            } catch(e) { alert("Error!"); }
+            } catch(e) { alert("เกิดข้อผิดพลาดในการเชื่อมต่อ"); }
             btn.disabled = false;
         };
+
         loadData();
     </script>
 </body>
