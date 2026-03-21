@@ -30,7 +30,11 @@
                     <form id="trainingForm" class="space-y-4 text-sm">
                         <input type="hidden" id="editRowId">
                         <div class="grid grid-cols-2 gap-2">
-                            <select id="academicYear" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"><option value="2568">2568</option><option value="2567">2567</option></select>
+                            <select id="academicYear" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="2570">2570</option>
+                                <option value="2569">2569</option>
+                                <option value="2568" selected>2568</option>
+                            </select>
                             <select id="level" required class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"><option value="">-- ระดับ --</option><option value="ครูประถม">ครูประถม</option><option value="ครูอนุบาล">ครูอนุบาล</option></select>
                         </div>
                         <select id="teacherName" required class="w-full p-3 border rounded-xl bg-gray-50 font-bold focus:ring-2 focus:ring-blue-500 outline-none"><option value="">-- เลือกชื่อครู --</option></select>
@@ -59,147 +63,10 @@
                         <span class="text-xs font-bold text-gray-400">ปีการศึกษา:</span>
                         <select id="viewYear" onchange="renderData()" class="p-2 px-4 border rounded-full font-bold text-blue-700 bg-blue-50 outline-none">
                             <option value="ALL">ทั้งหมด</option>
+                            <option value="2570">2570</option>
+                            <option value="2569">2569</option>
                             <option value="2568" selected>2568</option>
-                            <option value="2567">2567</option>
                         </select>
                     </div>
                     <div class="relative w-full md:w-80">
-                        <input type="text" id="search" oninput="renderData()" placeholder="🔍 ค้นหา ชื่อครู หรือ ระดับชั้น..." class="w-full px-5 py-2.5 border rounded-full text-sm outline-none bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all">
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden min-h-[500px]">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-50 text-gray-400 text-[10px] font-black border-b uppercase tracking-widest">
-                                <tr>
-                                    <th class="px-6 py-5">ข้อมูลการพัฒนา</th>
-                                    <th class="px-4 py-5 text-center">ชั่วโมง</th>
-                                    <th class="px-6 py-5 text-center">เครื่องมือ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody" class="divide-y divide-gray-50"></tbody>
-                        </table>
-                    </div>
-                    <div id="loader" class="text-center py-20 text-gray-300 hidden font-bold animate-pulse">กำลังโหลดข้อมูล...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // URL เว็บแอปเดิมของคุณครู
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyiGQcXZBjVktR_o6kxk9cQN3GGGC3nDRkD5vUgfOmUuEAxK-ND8rLcyJlLRJxmRDc4/exec"; 
-
-        const teachers = ["นางกิ่งกาญจน์ จันทร์ธง", "นางสาวกัลยา วงศ์ปาลีย์", "นางชนากานต์ ธะนะคำ", "นางสาวชนม์นิภา พงษ์บัณฑิตนุกุล", "นายชัชวาล สิริกรเกษม", "นางนันทนา คำตุ้ย", "นางสาวบุรัสกร วงค์ชัย", "นางพัชรินทร์ ธาวงค์", "นางสาวพิจิตรา บุญมาดวง", "นางสาวพิมลพร อุตเรือน", "นางสาวภูวรินทร์ แสนใจ", "นางสาวมาริสา มหาไม้", "นายยอดยิ่ง กันทะวงค์", "นางวชิรา บุญมี", "นางโสภิณ กันทะวงค์", "นางสาววรรณวิภา จินาติ", "นางวรารัตน์ แสงสว่าง", "นางสาววิลดา ตาคำ", "นางสาวศรสวรรค์ ตั๋นวัน", "นางสาวสุจิตรา เมืองแก้ว", "นางสุธาสินี เซ็นแก้ว", "นางสุภาพ ริยะป่า", "นางสาวอัจฉรา บุศยบุตร", "นายอรรถพล สิริรักษ์", "นายอภิวัฒน์ ธะนะคำ", "นายนัฐพงษ์ ไชยกันทา", "นายพิษณุ ธรรมตา", "นายอนุพงษ์ วรรณคำ", "ว่าที่ร้อยตรีหญิงชิดชนก นำมะ", "นางสาวแกมกมล ไชยกันทา", "นางสาวจินตนา กุนนะ", "นางสาวธวิชาทร อินทราทิพย์", "นางสาวกฤษชาญา ศิณารา", "นางสาวปัฐญา สายมณี", "นางสาวพิไลลักษณ์ อะกะเรือน"].sort();
-        const teacherSelect = document.getElementById('teacherName');
-        teachers.forEach(t => { let opt = document.createElement('option'); opt.value = t; opt.innerHTML = t; teacherSelect.appendChild(opt); });
-
-        let records = [];
-        function formatDateForInput(dateStr) {
-            if (!dateStr || dateStr === "") return "";
-            const d = new Date(dateStr);
-            return isNaN(d.getTime()) ? "" : d.toISOString().split('T')[0];
-        }
-
-        async function loadData() {
-            document.getElementById('loader').classList.remove('hidden');
-            try { 
-                const resp = await fetch(GOOGLE_SCRIPT_URL); 
-                records = await resp.json(); 
-                renderData(); 
-            } catch(e) { console.error(e); }
-            document.getElementById('loader').classList.add('hidden');
-        }
-
-        function renderData() {
-            const tbody = document.getElementById('tableBody');
-            const search = document.getElementById('search').value.toLowerCase();
-            const viewYear = document.getElementById('viewYear').value;
-            tbody.innerHTML = ''; 
-            let total = 0;
-
-            records.slice().reverse().forEach(r => {
-                const matchYear = (viewYear === "ALL" || r.academicYear.toString() === viewYear);
-                const matchSearch = (r.teacher.toLowerCase().includes(search) || r.level.toLowerCase().includes(search));
-                
-                if(matchYear && matchSearch) {
-                    const dStart = r.date ? new Date(r.date).toLocaleDateString('th-TH') : '-';
-                    const dEnd = r.endDate ? ' - ' + new Date(r.endDate).toLocaleDateString('th-TH') : '';
-
-                    tbody.innerHTML += `<tr class="hover:bg-blue-50/50 transition-all">
-                        <td class="px-6 py-5">
-                            <div class="font-extrabold text-gray-800 leading-tight mb-1">${r.name}</div>
-                            <div class="flex flex-wrap gap-2 items-center">
-                                <span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">${r.teacher}</span>
-                                <span class="text-[10px] font-bold bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">${r.level}</span>
-                            </div>
-                            <div class="text-[10px] text-indigo-500 font-bold mt-2">📅 วันที่: ${dStart}${dEnd}</div>
-                        </td>
-                        <td class="px-4 py-5 text-center font-black text-indigo-600 text-2xl">${Math.round(r.hours || 0)}</td>
-                        <td class="px-6 py-5 text-center">
-                            <button onclick="editItem('${r.rowId}')" class="p-2 px-5 bg-white border border-blue-200 text-blue-600 rounded-xl text-xs font-bold hover:bg-blue-600 hover:text-white transition-all">แก้ไข</button>
-                        </td>
-                    </tr>`;
-                    total += parseFloat(r.hours || 0);
-                }
-            });
-            document.getElementById('grandTotal').innerText = Math.round(total);
-        }
-
-        function editItem(id) {
-            const r = records.find(x => x.rowId.toString() === id.toString());
-            if(!r) return;
-            document.getElementById('editRowId').value = r.rowId;
-            document.getElementById('academicYear').value = r.academicYear;
-            document.getElementById('teacherName').value = r.teacher;
-            document.getElementById('level').value = r.level;
-            document.getElementById('courseName').value = r.name;
-            document.getElementById('location').value = r.location;
-            document.getElementById('organizer').value = r.organizer;
-            document.getElementById('hours').value = Math.round(r.hours);
-            document.getElementById('trainingDate').value = formatDateForInput(r.date);
-            document.getElementById('endDate').value = formatDateForInput(r.endDate);
-            
-            document.getElementById('formTitle').innerText = "📝 แก้ไขข้อมูล";
-            document.getElementById('submitBtn').innerText = "บันทึกการแก้ไข";
-            document.getElementById('cancelEdit').classList.remove('hidden');
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        document.getElementById('cancelEdit').onclick = () => {
-            document.getElementById('trainingForm').reset();
-            document.getElementById('editRowId').value = "";
-            document.getElementById('formTitle').innerText = "📝 บันทึกข้อมูลใหม่";
-            document.getElementById('submitBtn').innerText = "บันทึกข้อมูล";
-            document.getElementById('cancelEdit').classList.add('hidden');
-        };
-
-        document.getElementById('trainingForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true; btn.innerText = "กำลังประมวลผล...";
-            const data = {
-                action: document.getElementById('editRowId').value ? "edit" : "add",
-                rowId: document.getElementById('editRowId').value,
-                academicYear: document.getElementById('academicYear').value,
-                teacher: document.getElementById('teacherName').value,
-                level: document.getElementById('level').value,
-                name: document.getElementById('courseName').value,
-                location: document.getElementById('location').value,
-                organizer: document.getElementById('organizer').value,
-                hours: document.getElementById('hours').value,
-                date: document.getElementById('trainingDate').value,
-                endDate: document.getElementById('endDate').value
-            };
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
-                document.getElementById('cancelEdit').click();
-                await loadData();
-            } catch(e) { alert("เกิดข้อผิดพลาดในการบันทึก"); }
-            btn.disabled = false;
-        };
-        loadData();
-    </script>
-</body>
-</html>
+                        <input type="text" id="search" oninput="renderData
