@@ -6,19 +6,19 @@
     <title>ระบบบันทึกการอบรม - โรงเรียนจิรพิทยา</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700;800&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; }</style>
+    <style>body { font-family: 'Sarabun', sans-serif; background-color: #f8fafc; }</style>
 </head>
 <body class="p-2 md:p-8">
     <div class="max-w-7xl mx-auto">
-        <div class="bg-white rounded-[1.5rem] shadow-sm border border-gray-100 overflow-hidden mb-6">
-            <div class="bg-gradient-to-r from-blue-900 via-indigo-800 to-indigo-900 p-6 text-white text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+            <div class="bg-gradient-to-r from-indigo-900 to-blue-800 p-6 text-white flex flex-col md:flex-row items-center justify-between gap-4">
                 <div>
-                    <h1 class="text-2xl md:text-4xl font-extrabold">โรงเรียนจิรพิทยา</h1>
-                    <p class="text-indigo-200">ระบบบันทึกการพัฒนาบุคลากร (ค้นหาตามชื่อ/ระดับชั้น)</p>
+                    <h1 class="text-2xl md:text-3xl font-extrabold">โรงเรียนจิรพิทยา</h1>
+                    <p class="text-indigo-200 text-sm">ค้นหารายงานตามชื่อครู และ ระดับชั้น</p>
                 </div>
-                <div class="bg-white/10 px-6 py-3 rounded-2xl border border-white/20 text-center min-w-[150px]">
-                    <p id="grandTotal" class="text-4xl font-black text-yellow-400">0.0</p>
-                    <p class="text-[10px] uppercase font-bold text-white/60 tracking-wider">ชั่วโมงอบรมรวม</p>
+                <div class="bg-white/10 px-8 py-3 rounded-2xl border border-white/20 text-center">
+                    <p id="grandTotal" class="text-4xl font-black text-yellow-400">0</p>
+                    <p class="text-[10px] uppercase font-bold text-white/70">ชั่วโมงอบรมรวมทั้งหมด</p>
                 </div>
             </div>
         </div>
@@ -26,86 +26,68 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div class="lg:col-span-4">
                 <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 sticky top-4">
-                    <h2 id="formTitle" class="font-bold text-gray-800 mb-5 flex items-center gap-2 text-lg">📝 บันทึกข้อมูล</h2>
+                    <h2 id="formTitle" class="font-bold text-gray-800 mb-5 text-lg">📝 บันทึกข้อมูลใหม่</h2>
                     <form id="trainingForm" class="space-y-4 text-sm">
                         <input type="hidden" id="editRowId">
-                        <div class="grid grid-cols-2 gap-3">
-                            <select id="academicYear" class="p-3 border rounded-xl bg-gray-50 font-bold focus:ring-2 focus:ring-blue-500 outline-none"><option value="2568">2568</option><option value="2567">2567</option></select>
-                            <select id="level" required class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"><option value="">-- ระดับ --</option><option value="ครูประถม">ครูประถม</option><option value="ครูอนุบาล">ครูอนุบาล</option></select>
+                        <div class="grid grid-cols-2 gap-2">
+                            <select id="academicYear" class="p-3 border rounded-xl bg-gray-50"><option value="2568">2568</option><option value="2567">2567</option></select>
+                            <select id="level" required class="p-3 border rounded-xl bg-gray-50"><option value="">-- ระดับ --</option><option value="ครูประถม">ครูประถม</option><option value="ครูอนุบาล">ครูอนุบาล</option></select>
                         </div>
-                        <select id="teacherName" required class="w-full p-3 border rounded-xl bg-gray-50 font-bold focus:ring-2 focus:ring-blue-500 outline-none"><option value="">-- เลือกชื่อครู --</option></select>
-                        <input type="text" id="courseName" placeholder="ชื่อหลักสูตรที่อบรม" required class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
-                        <div class="grid grid-cols-2 gap-3">
-                            <input type="text" id="location" placeholder="สถานที่" required class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
-                            <input type="text" id="organizer" placeholder="หน่วยงานที่จัด" required class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                        <select id="teacherName" required class="w-full p-3 border rounded-xl bg-gray-50 font-bold"><option value="">-- เลือกชื่อครู --</option></select>
+                        <input type="text" id="courseName" placeholder="ชื่อหลักสูตร" required class="w-full p-3 border rounded-xl bg-gray-50">
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="location" placeholder="สถานที่" required class="p-3 border rounded-xl bg-gray-50">
+                            <input type="text" id="organizer" placeholder="หน่วยงานที่จัด" required class="p-3 border rounded-xl bg-gray-50">
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div><label class="text-[10px] text-gray-400 ml-1">วันที่เริ่ม</label><input type="date" id="trainingDate" required class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500"></div>
-                            <div><label class="text-[10px] text-gray-400 ml-1">ถึงวันที่</label><input type="date" id="endDate" class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500"></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div><label class="text-[10px] text-gray-400">วันที่เริ่ม</label><input type="date" id="trainingDate" required class="w-full p-3 border rounded-xl bg-gray-50"></div>
+                            <div><label class="text-[10px] text-gray-400">ถึงวันที่</label><input type="date" id="endDate" class="w-full p-3 border rounded-xl bg-gray-50"></div>
                         </div>
-                        <div class="relative">
-                            <label class="text-[10px] text-gray-400 ml-1">จำนวนชั่วโมง (ใส่จุดทศนิยมได้)</label>
-                            <input type="number" id="hours" placeholder="0.0" step="0.1" required class="w-full p-3 border rounded-xl bg-gray-50 text-center font-black text-indigo-600 text-2xl focus:ring-2 focus:ring-blue-500 outline-none">
+                        <div>
+                            <label class="text-[10px] text-gray-400">จำนวนชั่วโมง (เลขจำนวนเต็ม)</label>
+                            <input type="number" id="hours" placeholder="0" step="1" required class="w-full p-4 border rounded-xl bg-gray-50 text-center font-black text-indigo-600 text-3xl">
                         </div>
-                        <button type="submit" id="submitBtn" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-indigo-700 transition-all active:scale-95">บันทึกข้อมูล</button>
+                        <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-700">บันทึกข้อมูล</button>
                         <button type="button" id="cancelEdit" class="w-full bg-gray-200 text-gray-600 py-2 mt-2 rounded-xl hidden">ยกเลิกแก้ไข</button>
                     </form>
                 </div>
             </div>
 
             <div class="lg:col-span-8">
-                <div class="bg-white p-4 rounded-2xl border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-3 mb-4 shadow-sm">
-                    <div class="flex items-center gap-2 w-full md:w-auto">
-                        <span class="text-xs font-bold text-gray-400 uppercase">ปีการศึกษา:</span>
-                        <select id="viewYear" onchange="renderData()" class="p-2 px-4 border rounded-full font-bold text-blue-700 bg-blue-50 outline-none">
-                            <option value="ALL">ทั้งหมด</option>
-                            <option value="2568" selected>2568</option>
-                            <option value="2567">2567</option>
-                        </select>
-                    </div>
-                    <div class="relative w-full md:w-80">
-                        <input type="text" id="search" oninput="renderData()" placeholder="🔍 ค้นชื่อครู หรือ ระดับชั้น..." class="w-full px-5 py-2.5 border rounded-full text-sm outline-none bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-200 transition-all">
-                    </div>
+                <div class="bg-white p-4 rounded-2xl border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-3 mb-4">
+                    <select id="viewYear" onchange="renderData()" class="p-2 px-4 border rounded-full font-bold text-blue-700 bg-blue-50">
+                        <option value="ALL">ทุกปีการศึกษา</option><option value="2568" selected>2568</option><option value="2567">2567</option>
+                    </select>
+                    <input type="text" id="search" oninput="renderData()" placeholder="🔍 ค้นหา ชื่อครู หรือ ระดับชั้น..." class="w-full md:w-80 px-5 py-2.5 border rounded-full text-sm outline-none bg-gray-50 focus:bg-white transition-all">
                 </div>
 
-                <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden min-h-[500px]">
+                <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-50 text-gray-400 text-[10px] font-black border-b uppercase tracking-widest">
-                                <tr>
-                                    <th class="px-6 py-5">ข้อมูลการพัฒนาบุคลากร</th>
-                                    <th class="px-4 py-5 text-center">ชั่วโมง</th>
-                                    <th class="px-6 py-5 text-center">จัดการ</th>
-                                </tr>
+                            <thead class="bg-gray-50 text-gray-400 text-[10px] font-black border-b uppercase">
+                                <tr><th class="px-6 py-5">รายละเอียด</th><th class="px-4 py-5 text-center">ชั่วโมง</th><th class="px-6 py-5 text-center">จัดการ</th></tr>
                             </thead>
-                            <tbody id="tableBody" class="divide-y divide-gray-50">
-                                </tbody>
+                            <tbody id="tableBody" class="divide-y divide-gray-50"></tbody>
                         </table>
                     </div>
-                    <div id="loader" class="text-center py-20 text-gray-300 hidden">
-                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-100 border-t-blue-600 mb-2"></div>
-                        <p class="text-xs font-bold">กำลังดึงข้อมูลจากระบบ...</p>
-                    </div>
+                    <div id="loader" class="text-center py-20 text-gray-300 hidden font-bold italic">กำลังดึงข้อมูล...</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // *** วาง URL เว็บแอปของคุณครูตรงนี้ ***
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQvtICsmhlp0mxeaGI_y16Q-ZDqNzqBFinPz59VQeCBAhKeZIAG7TenSiXId9LlxjX/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLek0ZsL3uERDf9bBcpssarnnpVEgoVD-cy0ySIuOjW3K28adeP8QdAz82d04Zaqc/exec"; 
 
         const teachers = ["นางกิ่งกาญจน์ จันทร์ธง", "นางสาวกัลยา วงศ์ปาลีย์", "นางชนากานต์ ธะนะคำ", "นางสาวชนม์นิภา พงษ์บัณฑิตนุกุล", "นายชัชวาล สิริกรเกษม", "นางนันทนา คำตุ้ย", "นางสาวบุรัสกร วงค์ชัย", "นางพัชรินทร์ ธาวงค์", "นางสาวพิจิตรา บุญมาดวง", "นางสาวพิมลพร อุตเรือน", "นางสาวภูวรินทร์ แสนใจ", "นางสาวมาริสา มหาไม้", "นายยอดยิ่ง กันทะวงค์", "นางวชิรา บุญมี", "นางโสภิณ กันทะวงค์", "นางสาววรรณวิภา จินาติ", "นางวรารัตน์ แสงสว่าง", "นางสาววิลดา ตาคำ", "นางสาวศรสวรรค์ ตั๋นวัน", "นางสาวสุจิตรา เมืองแก้ว", "นางสุธาสินี เซ็นแก้ว", "นางสุภาพ ริยะป่า", "นางสาวอัจฉรา บุศยบุตร", "นายอรรถพล สิริรักษ์", "นายอภิวัฒน์ ธะนะคำ", "นายนัฐพงษ์ ไชยกันทา", "นายพิษณุ ธรรมตา", "นายอนุพงษ์ วรรณคำ", "ว่าที่ร้อยตรีหญิงชิดชนก นำมะ", "นางสาวแกมกมล ไชยกันทา", "นางสาวจินตนา กุนนะ", "นางสาวธวิชาทร อินทราทิพย์", "นางสาวกฤษชาญา ศิณารา", "นางสาวปัฐญา สายมณี", "นางสาวพิไลลักษณ์ อะกะเรือน"].sort();
         const teacherSelect = document.getElementById('teacherName');
         teachers.forEach(t => { let opt = document.createElement('option'); opt.value = t; opt.innerHTML = t; teacherSelect.appendChild(opt); });
 
         let records = [];
-
         function formatDateForInput(dateStr) {
             if (!dateStr || dateStr === "") return "";
             const d = new Date(dateStr);
-            if (isNaN(d.getTime())) return "";
-            return d.toISOString().split('T')[0];
+            return isNaN(d.getTime()) ? "" : d.toISOString().split('T')[0];
         }
 
         async function loadData() {
@@ -114,7 +96,7 @@
                 const resp = await fetch(GOOGLE_SCRIPT_URL); 
                 records = await resp.json(); 
                 renderData(); 
-            } catch(e) { console.error("Error:", e); }
+            } catch(e) { console.error(e); }
             document.getElementById('loader').classList.add('hidden');
         }
 
@@ -127,34 +109,28 @@
 
             records.slice().reverse().forEach(r => {
                 const matchYear = (viewYear === "ALL" || r.academicYear.toString() === viewYear);
-                // ค้นหาจาก ชื่อครู (r.teacher) และ ระดับชั้น (r.level)
+                // ค้นหาตามชื่อครู และ ระดับชั้น
                 const matchSearch = (r.teacher.toLowerCase().includes(search) || r.level.toLowerCase().includes(search));
                 
                 if(matchYear && matchSearch) {
-                    const dStart = r.date ? new Date(r.date).toLocaleDateString('th-TH', {day:'2-digit', month:'2-digit', year:'2-digit'}) : '-';
-                    const dEnd = r.endDate ? ' - ' + new Date(r.endDate).toLocaleDateString('th-TH', {day:'2-digit', month:'2-digit', year:'2-digit'}) : '';
+                    const dStart = r.date ? new Date(r.date).toLocaleDateString('th-TH') : '-';
+                    const dEnd = r.endDate ? ' - ' + new Date(r.endDate).toLocaleDateString('th-TH') : '';
 
-                    tbody.innerHTML += `<tr class="hover:bg-blue-50/40 transition-all">
+                    tbody.innerHTML += `<tr class="hover:bg-blue-50/50 transition-all">
                         <td class="px-6 py-5">
-                            <div class="font-extrabold text-gray-800 leading-tight mb-1">${r.name}</div>
-                            <div class="flex flex-wrap gap-2 items-center">
-                                <span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">${r.teacher}</span>
-                                <span class="text-[10px] font-bold bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">${r.level}</span>
-                            </div>
-                            <div class="text-[10px] text-indigo-500 font-bold mt-2 flex items-center gap-1">
-                                📅 วันที่: ${dStart}${dEnd}
-                            </div>
-                            <div class="text-[9px] text-gray-400 italic mt-1">${r.location} | โดย ${r.organizer}</div>
+                            <div class="font-extrabold text-gray-800 leading-tight">${r.name}</div>
+                            <div class="text-[10px] font-bold text-blue-600 mt-1 uppercase">${r.teacher} | ${r.level}</div>
+                            <div class="text-[10px] text-indigo-500 font-bold mt-1 tracking-wide">📅 ${dStart}${dEnd}</div>
                         </td>
-                        <td class="px-4 py-5 text-center font-black text-indigo-600 text-xl">${parseFloat(r.hours || 0).toFixed(1)}</td>
+                        <td class="px-4 py-5 text-center font-black text-indigo-600 text-2xl">${Math.round(r.hours || 0)}</td>
                         <td class="px-6 py-5 text-center">
-                            <button onclick="editItem('${r.rowId}')" class="p-2 px-5 bg-white border border-blue-200 text-blue-600 rounded-xl text-xs font-bold hover:bg-blue-600 hover:text-white hover:shadow-lg transition-all active:scale-90">แก้ไข</button>
+                            <button onclick="editItem('${r.rowId}')" class="p-2 px-6 bg-white border border-blue-200 text-blue-600 rounded-xl text-xs font-bold hover:bg-blue-600 hover:text-white transition-all">แก้ไข</button>
                         </td>
                     </tr>`;
                     total += parseFloat(r.hours || 0);
                 }
             });
-            document.getElementById('grandTotal').innerText = total.toFixed(1);
+            document.getElementById('grandTotal').innerText = Math.round(total);
         }
 
         function editItem(id) {
@@ -167,10 +143,9 @@
             document.getElementById('courseName').value = r.name;
             document.getElementById('location').value = r.location;
             document.getElementById('organizer').value = r.organizer;
-            document.getElementById('hours').value = r.hours;
+            document.getElementById('hours').value = Math.round(r.hours);
             document.getElementById('trainingDate').value = formatDateForInput(r.date);
             document.getElementById('endDate').value = formatDateForInput(r.endDate);
-            
             document.getElementById('formTitle').innerText = "📝 แก้ไขข้อมูล";
             document.getElementById('submitBtn').innerText = "บันทึกการแก้ไข";
             document.getElementById('cancelEdit').classList.remove('hidden');
@@ -180,7 +155,7 @@
         document.getElementById('cancelEdit').onclick = () => {
             document.getElementById('trainingForm').reset();
             document.getElementById('editRowId').value = "";
-            document.getElementById('formTitle').innerText = "📝 บันทึกข้อมูล";
+            document.getElementById('formTitle').innerText = "📝 บันทึกข้อมูลใหม่";
             document.getElementById('submitBtn').innerText = "บันทึกข้อมูล";
             document.getElementById('cancelEdit').classList.add('hidden');
         };
@@ -188,8 +163,7 @@
         document.getElementById('trainingForm').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
-            btn.disabled = true; btn.innerText = "กำลังประมวลผล...";
-            
+            btn.disabled = true; btn.innerText = "กำลังบันทึก...";
             const data = {
                 action: document.getElementById('editRowId').value ? "edit" : "add",
                 rowId: document.getElementById('editRowId').value,
@@ -203,15 +177,13 @@
                 date: document.getElementById('trainingDate').value,
                 endDate: document.getElementById('endDate').value
             };
-
             try {
                 await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
                 document.getElementById('cancelEdit').click();
                 await loadData();
-            } catch(e) { alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง"); }
+            } catch(e) { alert("เกิดข้อผิดพลาด"); }
             btn.disabled = false;
         };
-
         loadData();
     </script>
 </body>
