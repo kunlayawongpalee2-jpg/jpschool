@@ -33,8 +33,8 @@
                             <select id="academicYear" class="p-3 border rounded-xl bg-gray-50 font-bold"><option value="2568">2568</option><option value="2567">2567</option></select>
                             <select id="level" required class="p-3 border rounded-xl bg-gray-50"><option value="">-- ระดับ --</option><option value="ครูประถม">ครูประถม</option><option value="ครูอนุบาล">ครูอนุบาล</option></select>
                         </div>
-                        <select id="teacherName" required class="w-full p-3 border rounded-xl bg-gray-50 font-bold"><option value="">-- เลือกชื่อ --</option></select>
-                        <input type="text" id="courseName" placeholder="ชื่อหลักสูตร" required class="w-full p-3 border rounded-xl bg-gray-50">
+                        <select id="teacherName" required class="w-full p-3 border rounded-xl bg-gray-50 font-bold"><option value="">-- เลือกชื่อครู --</option></select>
+                        <input type="text" id="courseName" placeholder="ชื่อหลักสูตรที่อบรม" required class="w-full p-3 border rounded-xl bg-gray-50">
                         <div class="grid grid-cols-2 gap-3">
                             <input type="text" id="location" placeholder="สถานที่" required class="p-3 border rounded-xl bg-gray-50">
                             <input type="text" id="organizer" placeholder="หน่วยงานที่จัด" required class="p-3 border rounded-xl bg-gray-50">
@@ -44,7 +44,7 @@
                             <div><label class="text-[10px] text-gray-400">ถึงวันที่ (ถ้ามี)</label><input type="date" id="endDate" class="w-full p-3 border rounded-xl bg-gray-50"></div>
                         </div>
                         <input type="number" id="hours" placeholder="จำนวนชั่วโมง" step="0.1" required class="w-full p-3 border rounded-xl bg-gray-50 text-center font-black text-indigo-600 text-lg">
-                        <button type="submit" id="submitBtn" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg">บันทึกข้อมูล</button>
+                        <button type="submit" id="submitBtn" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-indigo-700 transition-all">บันทึกข้อมูล</button>
                         <button type="button" id="cancelEdit" class="w-full bg-gray-200 text-gray-600 py-2 mt-2 rounded-xl hidden">ยกเลิกแก้ไข</button>
                     </form>
                 </div>
@@ -57,13 +57,13 @@
                         <option value="2568" selected>2568</option>
                         <option value="2567">2567</option>
                     </select>
-                    <input type="text" id="search" oninput="renderData()" placeholder="ค้นหา..." class="px-4 py-2 border rounded-full text-sm outline-none bg-gray-50 w-full md:w-64">
+                    <input type="text" id="search" oninput="renderData()" placeholder="ค้นหาชื่อ หรือ หลักสูตร..." class="px-4 py-2 border rounded-full text-sm outline-none bg-gray-50 w-full md:w-64">
                 </div>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden min-h-[400px]">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-50 text-gray-400 text-[10px] font-black border-b">
-                                <tr><th class="px-4 py-4">รายละเอียดการอบรม</th><th class="px-4 py-4 text-center">ชั่วโมง</th><th class="px-4 py-4 text-center">จัดการ</th></tr>
+                            <thead class="bg-gray-50 text-gray-400 text-[10px] font-black border-b uppercase tracking-wider">
+                                <tr><th class="px-4 py-4">รายละเอียด</th><th class="px-4 py-4 text-center">ชั่วโมง</th><th class="px-4 py-4 text-center">จัดการ</th></tr>
                             </thead>
                             <tbody id="tableBody" class="divide-y divide-gray-50"></tbody>
                         </table>
@@ -75,18 +75,27 @@
     </div>
 
     <script>
-        // วาง URL ของคุณครูตรงนี้ครับ
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQvtICsmhlp0mxeaGI_y16Q-ZDqNzqBFinPz59VQeCBAhKeZIAG7TenSiXId9LlxjX/exec"; 
+        // 1. นำ URL จากการ Deploy มาวางในเครื่องหมายคำพูดด้านล่างนี้
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJ-VVKZzq5sEeyl906HRzK6ewT4hHzIDgo_HtRT_uP2a7y39swYkQfW89OrZFIEgdH/exec"; 
 
         const teachers = ["นางกิ่งกาญจน์ จันทร์ธง", "นางสาวกัลยา วงศ์ปาลีย์", "นางชนากานต์ ธะนะคำ", "นางสาวชนม์นิภา พงษ์บัณฑิตนุกุล", "นายชัชวาล สิริกรเกษม", "นางนันทนา คำตุ้ย", "นางสาวบุรัสกร วงค์ชัย", "นางพัชรินทร์ ธาวงค์", "นางสาวพิจิตรา บุญมาดวง", "นางสาวพิมลพร อุตเรือน", "นางสาวภูวรินทร์ แสนใจ", "นางสาวมาริสา มหาไม้", "นายยอดยิ่ง กันทะวงค์", "นางวชิรา บุญมี", "นางโสภิณ กันทะวงค์", "นางสาววรรณวิภา จินาติ", "นางวรารัตน์ แสงสว่าง", "นางสาววิลดา ตาคำ", "นางสาวศรสวรรค์ ตั๋นวัน", "นางสาวสุจิตรา เมืองแก้ว", "นางสุธาสินี เซ็นแก้ว", "นางสุภาพ ริยะป่า", "นางสาวอัจฉรา บุศยบุตร", "นายอรรถพล สิริรักษ์", "นายอภิวัฒน์ ธะนะคำ", "นายนัฐพงษ์ ไชยกันทา", "นายพิษณุ ธรรมตา", "นายอนุพงษ์ วรรณคำ", "ว่าที่ร้อยตรีหญิงชิดชนก นำมะ", "นางสาวแกมกมล ไชยกันทา", "นางสาวจินตนา กุนนะ", "นางสาวธวิชาทร อินทราทิพย์", "นางสาวกฤษชาญา ศิณารา", "นางสาวปัฐญา สายมณี", "นางสาวพิไลลักษณ์ อะกะเรือน"].sort();
         const teacherSelect = document.getElementById('teacherName');
         teachers.forEach(t => { let opt = document.createElement('option'); opt.value = t; opt.innerHTML = t; teacherSelect.appendChild(opt); });
 
         let records = [];
+        function formatDateForInput(dateStr) {
+            if (!dateStr || dateStr === "") return "";
+            const d = new Date(dateStr);
+            return isNaN(d.getTime()) ? "" : d.toISOString().split('T')[0];
+        }
+
         async function loadData() {
             document.getElementById('loader').classList.remove('hidden');
-            try { const resp = await fetch(GOOGLE_SCRIPT_URL); records = await resp.json(); renderData(); } 
-            catch(e) { console.error(e); }
+            try { 
+                const resp = await fetch(GOOGLE_SCRIPT_URL); 
+                records = await resp.json(); 
+                renderData(); 
+            } catch(e) { console.error(e); }
             document.getElementById('loader').classList.add('hidden');
         }
 
@@ -95,17 +104,25 @@
             const search = document.getElementById('search').value.toLowerCase();
             const viewYear = document.getElementById('viewYear').value;
             tbody.innerHTML = ''; let total = 0;
+
             records.slice().reverse().forEach(r => {
-                if((viewYear === "ALL" || r.academicYear == viewYear) && (r.teacher.toLowerCase().includes(search) || r.name.toLowerCase().includes(search))) {
-                    tbody.innerHTML += `<tr class="hover:bg-blue-50/50">
-                        <td class="px-4 py-4"><div class="font-bold text-gray-900">${r.name}</div><div class="text-[10px] font-bold text-blue-600">${r.teacher} | ${r.level}</div></td>
-                        <td class="px-4 py-4 text-center font-black text-indigo-600">${r.hours}</td>
-                        <td class="px-4 py-4 text-center"><button onclick="editItem('${r.rowId}')" class="p-1 px-3 bg-blue-50 text-blue-700 rounded-lg text-xs font-bold">แก้ไข</button></td>
+                if((viewYear === "ALL" || r.academicYear.toString() === viewYear) && 
+                   (r.teacher.toLowerCase().includes(search) || r.name.toLowerCase().includes(search))) {
+                    tbody.innerHTML += `<tr class="hover:bg-blue-50/50 transition-colors">
+                        <td class="px-4 py-4">
+                            <div class="font-bold text-gray-900">${r.name}</div>
+                            <div class="text-[10px] font-bold text-blue-600">${r.teacher} | ${r.level}</div>
+                            <div class="text-[9px] text-gray-400 italic">${r.location} (${r.organizer})</div>
+                        </td>
+                        <td class="px-4 py-4 text-center font-black text-indigo-600 text-lg">${r.hours}</td>
+                        <td class="px-4 py-4 text-center">
+                            <button onclick="editItem('${r.rowId}')" class="p-1 px-4 bg-blue-50 text-blue-700 rounded-lg text-xs font-bold hover:bg-blue-100">แก้ไข</button>
+                        </td>
                     </tr>`;
                     total += parseFloat(r.hours || 0);
                 }
             });
-            document.getElementById('grandTotal').innerText = total.toLocaleString();
+            document.getElementById('grandTotal').innerText = total.toLocaleString(undefined, {minimumFractionDigits: 1});
         }
 
         function editItem(id) {
@@ -119,8 +136,8 @@
             document.getElementById('location').value = r.location;
             document.getElementById('organizer').value = r.organizer;
             document.getElementById('hours').value = r.hours;
-            document.getElementById('trainingDate').value = r.date ? new Date(r.date).toISOString().split('T')[0] : "";
-            document.getElementById('endDate').value = r.endDate ? new Date(r.endDate).toISOString().split('T')[0] : "";
+            document.getElementById('trainingDate').value = formatDateForInput(r.date);
+            document.getElementById('endDate').value = formatDateForInput(r.endDate);
             document.getElementById('formTitle').innerText = "📝 แก้ไขข้อมูล";
             document.getElementById('submitBtn').innerText = "บันทึกการแก้ไข";
             document.getElementById('cancelEdit').classList.remove('hidden');
@@ -130,8 +147,9 @@
         document.getElementById('cancelEdit').onclick = () => {
             document.getElementById('trainingForm').reset();
             document.getElementById('editRowId').value = "";
-            document.getElementById('cancelEdit').classList.add('hidden');
+            document.getElementById('formTitle').innerText = "📝 บันทึกข้อมูล";
             document.getElementById('submitBtn').innerText = "บันทึกข้อมูล";
+            document.getElementById('cancelEdit').classList.add('hidden');
         };
 
         document.getElementById('trainingForm').onsubmit = async (e) => {
@@ -147,15 +165,15 @@
                 name: document.getElementById('courseName').value,
                 location: document.getElementById('location').value,
                 organizer: document.getElementById('organizer').value,
+                hours: document.getElementById('hours').value,
                 date: document.getElementById('trainingDate').value,
-                endDate: document.getElementById('endDate').value,
-                hours: document.getElementById('hours').value
+                endDate: document.getElementById('endDate').value
             };
             try {
                 await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
                 document.getElementById('cancelEdit').click();
-                loadData();
-            } catch(e) { alert("Error"); }
+                await loadData();
+            } catch(e) { alert("Error!"); }
             btn.disabled = false;
         };
         loadData();
