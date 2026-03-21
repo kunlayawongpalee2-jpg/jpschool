@@ -47,7 +47,7 @@
                             <label class="text-[10px] text-gray-400 ml-1">จำนวนชั่วโมง (เลขจำนวนเต็ม)</label>
                             <input type="number" id="hours" placeholder="0" step="1" required class="w-full p-4 border rounded-xl bg-gray-50 text-center font-black text-indigo-600 text-3xl focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
-                        <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-700 transition-all active:scale-95">บันทึกข้อมูลเข้าชีต</button>
+                        <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-700 transition-all active:scale-95">บันทึกข้อมูล</button>
                         <button type="button" id="cancelEdit" class="w-full bg-gray-200 text-gray-600 py-2 mt-2 rounded-xl hidden">ยกเลิกการแก้ไข</button>
                     </form>
                 </div>
@@ -88,7 +88,7 @@
     </div>
 
     <script>
-        // *** วาง URL เว็บแอปของคุณครูตรงนี้ ***
+        // URL เว็บแอปเดิมของคุณครู
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyiGQcXZBjVktR_o6kxk9cQN3GGGC3nDRkD5vUgfOmUuEAxK-ND8rLcyJlLRJxmRDc4/exec"; 
 
         const teachers = ["นางกิ่งกาญจน์ จันทร์ธง", "นางสาวกัลยา วงศ์ปาลีย์", "นางชนากานต์ ธะนะคำ", "นางสาวชนม์นิภา พงษ์บัณฑิตนุกุล", "นายชัชวาล สิริกรเกษม", "นางนันทนา คำตุ้ย", "นางสาวบุรัสกร วงค์ชัย", "นางพัชรินทร์ ธาวงค์", "นางสาวพิจิตรา บุญมาดวง", "นางสาวพิมลพร อุตเรือน", "นางสาวภูวรินทร์ แสนใจ", "นางสาวมาริสา มหาไม้", "นายยอดยิ่ง กันทะวงค์", "นางวชิรา บุญมี", "นางโสภิณ กันทะวงค์", "นางสาววรรณวิภา จินาติ", "นางวรารัตน์ แสงสว่าง", "นางสาววิลดา ตาคำ", "นางสาวศรสวรรค์ ตั๋นวัน", "นางสาวสุจิตรา เมืองแก้ว", "นางสุธาสินี เซ็นแก้ว", "นางสุภาพ ริยะป่า", "นางสาวอัจฉรา บุศยบุตร", "นายอรรถพล สิริรักษ์", "นายอภิวัฒน์ ธะนะคำ", "นายนัฐพงษ์ ไชยกันทา", "นายพิษณุ ธรรมตา", "นายอนุพงษ์ วรรณคำ", "ว่าที่ร้อยตรีหญิงชิดชนก นำมะ", "นางสาวแกมกมล ไชยกันทา", "นางสาวจินตนา กุนนะ", "นางสาวธวิชาทร อินทราทิพย์", "นางสาวกฤษชาญา ศิณารา", "นางสาวปัฐญา สายมณี", "นางสาวพิไลลักษณ์ อะกะเรือน"].sort();
@@ -171,7 +171,7 @@
             document.getElementById('trainingForm').reset();
             document.getElementById('editRowId').value = "";
             document.getElementById('formTitle').innerText = "📝 บันทึกข้อมูลใหม่";
-            document.getElementById('submitBtn').innerText = "บันทึกข้อมูลเข้าชีต";
+            document.getElementById('submitBtn').innerText = "บันทึกข้อมูล";
             document.getElementById('cancelEdit').classList.add('hidden');
         };
 
