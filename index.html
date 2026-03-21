@@ -67,8 +67,19 @@
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
-                            <input type="date" id="trainingDate" required class="w-full p-3 border rounded-xl bg-gray-50">
-                            <input type="number" id="hours" placeholder="ชั่วโมง" step="0.1" required class="w-full p-3 border rounded-xl bg-gray-50 text-center font-black text-indigo-600">
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 block mb-1">วันที่เริ่มอบรม</label>
+                                <input type="date" id="trainingDate" required class="w-full p-3 border rounded-xl bg-gray-50">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 block mb-1">ถึงวันที่ (ถ้ามี)</label>
+                                <input type="date" id="endDate" class="w-full p-3 border rounded-xl bg-gray-50">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 block mb-1">จำนวนชั่วโมง</label>
+                            <input type="number" id="hours" placeholder="จำนวนชั่วโมง" step="0.1" required class="w-full p-3 border rounded-xl bg-gray-50 text-center font-black text-indigo-600">
                         </div>
 
                         <button type="submit" id="submitBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95 text-lg">บันทึกข้อมูล</button>
@@ -150,12 +161,15 @@
             let grandTotal = 0;
 
             records.slice().reverse().forEach(r => {
-                // ส่วนแก้ไข: ให้ค้นหาได้ทั้งชื่อ (r.teacher) และ ระดับชั้น (r.level)
                 const teacherMatch = r.teacher.toLowerCase().includes(search);
                 const levelMatch = (r.level || "").toLowerCase().includes(search);
                 const yearMatch = (viewYear === "ALL" || r.academicYear == viewYear);
 
                 if(yearMatch && (teacherMatch || levelMatch)) {
+                    // ปรับการแสดงผลวันที่ให้รองรับช่วงวัน
+                    const dateStart = new Date(r.date).toLocaleDateString('th-TH');
+                    const dateEnd = r.endDate ? ' - ' + new Date(r.endDate).toLocaleDateString('th-TH') : '';
+                    
                     tbody.innerHTML += `<tr class="hover:bg-blue-50/50">
                         <td class="px-4 py-4">
                             <div class="font-bold text-gray-900 mb-0.5">${r.name}</div>
@@ -164,7 +178,7 @@
                                 <span class="text-gray-300 mx-1">|</span> 
                                 <span class="text-indigo-500">${r.level || '-'}</span>
                                 <span class="text-gray-300 mx-1">|</span>
-                                <span class="text-gray-400 font-normal italic">${new Date(r.date).toLocaleDateString('th-TH')}</span>
+                                <span class="text-gray-400 font-normal italic">🗓️ ${dateStart}${dateEnd}</span>
                             </div>
                         </td>
                         <td class="px-4 py-4 text-center font-black text-indigo-600 text-lg">${r.hours}</td>
@@ -187,7 +201,11 @@
             document.getElementById('courseName').value = r.name;
             document.getElementById('location').value = r.location;
             document.getElementById('organizer').value = r.organizer;
+            
             if(r.date) document.getElementById('trainingDate').value = new Date(r.date).toISOString().split('T')[0];
+            if(r.endDate) document.getElementById('endDate').value = new Date(r.endDate).toISOString().split('T')[0];
+            else document.getElementById('endDate').value = "";
+
             document.getElementById('hours').value = r.hours;
             document.getElementById('formTitle').innerHTML = "📝 แก้ไขข้อมูล";
             document.getElementById('submitBtn').innerText = "ยืนยันการแก้ไข";
@@ -219,6 +237,7 @@
                 location: document.getElementById('location').value,
                 organizer: document.getElementById('organizer').value,
                 date: document.getElementById('trainingDate').value,
+                endDate: document.getElementById('endDate').value, // ส่งค่า endDate
                 hours: document.getElementById('hours').value
             };
             try {
